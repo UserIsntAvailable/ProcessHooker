@@ -23,6 +23,7 @@ namespace ProcessHooker.Service {
                 .UseWindowsService()
                 .ConfigureServices(services => {
                     services.AddHostedService<Service>();
+                    services.AddSingleton<IHooksSectionParser, HooksSectionParser>();
                 });
         }
 
