@@ -1,11 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service {
-    class HooksSectionParser : IHooksSectionParser {
-
+    public class HooksSectionParser : IHooksSectionParser {
         public IEnumerable<ProcessHook> Parse(IConfigurationSection section) {
-            throw new System.NotImplementedException();
+            return section
+               .AsEnumerable(true)
+               .GroupBy(pair => pair.Key.Split(":")[0])
+               .Select(
+                       group => string.Join(
+                           ",",
+                           group.Where(pair => pair.Value is not null)
+                             .Select(pair => $"\"{pair.Key[2..]}\":\"{pair.Value}\"")
+                       )
+                   )
+               .Select(jsonString => JsonSerializer.Deserialize<ProcessHook>($"{{{jsonString}}}"))
+               .ToList();
         }
     }
 }

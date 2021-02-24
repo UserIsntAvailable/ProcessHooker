@@ -1,4 +1,4 @@
-﻿namespace ProcessHooker {
+﻿namespace ProcessHooker.Service {
     /// <summary>
     /// Maps process hooks from the appsettings.json file
     /// </summary>
