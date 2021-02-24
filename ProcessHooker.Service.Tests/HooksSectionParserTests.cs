@@ -1,36 +1,47 @@
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Xunit;
+using AutoFixture;
 using FluentAssertions;
 
 namespace ProcessHooker.Service.Tests {
     public class HooksSectionParserTests {
         private readonly HooksSectionParser _sut;
+        private readonly Fixture            _fixture;
 
-        public HooksSectionParserTests() { _sut = new HooksSectionParser(); }
+        public HooksSectionParserTests() {
+            _fixture = new Fixture();
+            _sut     = new HooksSectionParser();
+        }
 
         [Fact]
         public void Parse_ShouldReturnIEnumerableOfProcessHooks_WhenIConfigurationSectionIsValid() {
-            IEnumerable<ProcessHook> actual = new[] {
-                new ProcessHook("Rider", "git"),
-                new ProcessHook("Hello", "World"),
-            };
+            var actual =
+                _fixture
+                    .CreateMany<ProcessHook>(3)
+                    .ToArray();
 
-            var expected = _sut.Parse(CreateConfigurationSection());
+            var jsonHooks =
+                actual.Select(
+                    hook => $"{{\"{nameof(hook.ProcessName)}\":\"{hook.ProcessName}\"," +
+                            $" \"{nameof(hook.FileToOpen)}\":\"{hook.FileToOpen}\"}}"
+                );
 
-            actual.Should().Equal(expected);
+            var expected = _sut
+                .Parse(CreateConfigurationSection(string.Join(",", jsonHooks)));
+
+            actual.Should().BeEquivalentTo(expected);
         }
 
-        private static IConfigurationSection CreateConfigurationSection() {
-            const string sample =
-                @"{""Hooks"":[{""ProcessName"":""Hello"", ""FileToOpen"":""World""},{""ProcessName"":""Rider"", ""FileToOpen"":""git""}]}";
+        private static IConfigurationSection CreateConfigurationSection(string sample) {
+            sample = $"{{\"Hooks\":[{sample}]}}";
 
             return new ConfigurationBuilder()
-               .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(sample)))
-               .Build()
-               .GetSection("Hooks");
+                   .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(sample)))
+                   .Build()
+                   .GetSection("Hooks");
         }
     }
 }
