@@ -23,25 +23,10 @@ namespace ProcessHooker.Service.Tests {
                     .CreateMany<ProcessHook>(3)
                     .ToArray();
 
-            var jsonHooks =
-                actual.Select(
-                    hook => $"{{\"{nameof(hook.ProcessName)}\":\"{hook.ProcessName}\"," +
-                            $" \"{nameof(hook.FileToOpen)}\":\"{hook.FileToOpen}\"}}"
-                );
-
             var expected = _sut
-                .Parse(CreateConfigurationSection(string.Join(",", jsonHooks)));
+                .Parse(Factory.CreateConfigurationSection(actual));
 
             actual.Should().BeEquivalentTo(expected);
-        }
-
-        private static IConfigurationSection CreateConfigurationSection(string sample) {
-            sample = $"{{\"Hooks\":[{sample}]}}";
-
-            return new ConfigurationBuilder()
-                   .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(sample)))
-                   .Build()
-                   .GetSection("Hooks");
         }
     }
 }
