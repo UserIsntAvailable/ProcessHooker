@@ -3,7 +3,7 @@ using Xunit;
 using AutoFixture;
 using FluentAssertions;
 
-namespace ProcessHooker.Service.Tests {
+namespace ProcessHooker.Service.UnitTests {
     public class HooksSectionParserTests {
         private readonly HooksSectionParser _sut;
         private readonly Fixture            _fixture;

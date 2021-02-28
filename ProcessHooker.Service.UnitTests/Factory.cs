@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 
-namespace ProcessHooker.Service.Tests {
+namespace ProcessHooker.Service.UnitTests {
     public static class Factory {
         public static IConfigurationSection CreateConfigurationSection(IEnumerable<ProcessHook> processHooks) {
             var jsonHooks =

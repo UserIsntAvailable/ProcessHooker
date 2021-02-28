@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>ProcessHooker.Service.Tests</RootNamespace>
+    <RootNamespace>ProcessHooker.Service.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

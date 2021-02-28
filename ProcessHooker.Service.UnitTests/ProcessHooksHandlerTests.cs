@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Xunit;
 
-namespace ProcessHooker.Service.Tests {
+namespace ProcessHooker.Service.UnitTests {
     public class HooksHandlerTests {
         private readonly ProcessHooksHandler          _sut;
         private readonly Fixture                      _fixture         = new Fixture();
