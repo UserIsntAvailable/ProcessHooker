@@ -1,7 +1,4 @@
-using System.IO;
-using System.Text;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 using Xunit;
 using AutoFixture;
 using FluentAssertions;

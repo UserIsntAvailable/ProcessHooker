@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -9,14 +7,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service {
     public class Service : BackgroundService {
-        private readonly ILogger<Service>    _logger;
-        private readonly IConfiguration      _configuration;
-        private readonly IHooksSectionParser _sectionParser;
+        private readonly ILogger<Service>     _logger;
+        private readonly IConfiguration       _configuration;
+        private readonly IHooksSectionParser  _sectionParser;
+        private readonly IProcessHooksHandler _hooksHandler;
 
-        public Service(ILogger<Service> logger, IConfiguration configuration, IHooksSectionParser sectionParser) {
+        public Service(
+            ILogger<Service>     logger,
+            IConfiguration       configuration,
+            IHooksSectionParser  sectionParser,
+            IProcessHooksHandler hooksHandler
+        ) {
             _logger        = logger;
             _configuration = configuration;
             _sectionParser = sectionParser;
+            _hooksHandler  = hooksHandler;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken) {
@@ -31,22 +36,14 @@ namespace ProcessHooker.Service {
                     .Parse(_configuration.GetSection("Hooks"))
                     .ToArray();
 
+            // TODO - Log what processHooks were parsed in a json array format. 
+            _logger.LogInformation("Hooks section parsed");
+
             while(!stoppingToken.IsCancellationRequested) {
+                // TODO - Be able to configure the delay time from the appsettings.json.
                 await Task.Delay(4000, stoppingToken);
 
-                var filesToOpen =
-                    processHooks
-                        .Where(
-                            hook => Process.GetProcessesByName(hook.ProcessName)
-                                           .Any(process => process.Responding)
-                        )
-                        .Select(hook => hook.FileToOpen);
-
-                _logger.LogInformation("Hooks section parsed");
-
-                StartProcesses(filesToOpen);
-
-                _logger.LogInformation("Processes opened");
+                _hooksHandler.Handle(processHooks);
             }
 
             await Task.CompletedTask;
@@ -56,18 +53,6 @@ namespace ProcessHooker.Service {
             _logger.LogInformation("Service stopped");
 
             return base.StopAsync(cancellationToken);
-        }
-
-        private static void StartProcesses(IEnumerable<string> filesToOpen) {
-            foreach(var file in filesToOpen) {
-                Process.Start(
-                    new ProcessStartInfo() {
-                        FileName        = file,
-                        CreateNoWindow  = false,
-                        UseShellExecute = true,
-                    }
-                );
-            }
         }
     }
 }

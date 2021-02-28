@@ -26,8 +26,4 @@
     <ProjectReference Include="..\ProcessHooker.Service\ProcessHooker.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="ProcessProviderTests.cs" />
-  </ItemGroup>
-
 </Project>
