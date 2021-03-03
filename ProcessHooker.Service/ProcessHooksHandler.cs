@@ -20,7 +20,7 @@ namespace ProcessHooker.Service {
                             var isOpen =
                                 _processProvider
                                     .GetProcessesByName(processHook.Name)
-                                    .Any(process => process.Responding);
+                                    .Any(process => process.IsOpen);
 
                             if(isOpen) _logger.LogInformation("{ProcessHookName} is open", processHook.Name);
 

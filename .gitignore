@@ -18,6 +18,7 @@ mono_crash.*
 
 # Build results
 .idea
+*.DotSettings
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
