@@ -7,10 +7,11 @@ namespace ProcessHooker.Service {
     public class ProcessProvider : IProcessProvider {
         public void Start(string filename) {
             Process.Start(
+                // TODO - Been able to modify the ProcessStartInfo for each ProcessHook
                 new ProcessStartInfo() {
                     FileName        = filename,
-                    CreateNoWindow  = false,
-                    UseShellExecute = true,
+                    CreateNoWindow  = true,
+                    UseShellExecute = false,
                 }
             );
         }

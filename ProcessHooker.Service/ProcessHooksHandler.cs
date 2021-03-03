@@ -17,10 +17,7 @@ namespace ProcessHooker.Service {
                 processHooks
                     .Where(
                         processHook => {
-                            var isOpen =
-                                _processProvider
-                                    .GetProcessesByName(processHook.Name)
-                                    .Any(process => process.IsOpen);
+                            var isOpen = this.IsProcessOpen(processHook.Name);
 
                             if(isOpen) _logger.LogInformation("{ProcessHookName} is open", processHook.Name);
 
@@ -30,10 +27,19 @@ namespace ProcessHooker.Service {
                     .Select(hook => hook.HookedFile);
 
             foreach(var hookFile in hooksToOpen) {
+                // TODO - Change the behaviour of this if statement
+                if(this.IsProcessOpen(hookFile)) continue;
+
                 _logger.LogInformation("Opening {HookFile}", hookFile);
 
                 _processProvider.Start(hookFile);
             }
+        }
+
+        private bool IsProcessOpen(string processName) {
+            return _processProvider
+                   .GetProcessesByName(processName)
+                   .Any(process => process.IsOpen);
         }
     }
 }

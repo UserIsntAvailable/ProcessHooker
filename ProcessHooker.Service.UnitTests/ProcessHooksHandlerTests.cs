@@ -19,26 +19,54 @@ namespace ProcessHooker.Service.UnitTests {
         }
 
         [Fact]
-        public void Handle_ShouldStartProcesses_WhenProcessHooksAreValid() {
-            const int processCount = 3;
+        public void Handle_ShouldStartProcesses_WhenProcessHooksAreValidAndHooksAreNotOpenYet() {
+            const int processesCount = 3;
 
-            var hooks =
+            var processHooks =
                 _fixture
-                    .CreateMany<ProcessHook>(processCount)
+                    .CreateMany<ProcessHook>(processesCount)
+                    .ToArray();
+
+            _processProvider
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("Name")))
+                .Returns(processHooks.Select(processHook => (processHook.Name, true)));
+
+            _processProvider
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedFile")))
+                .Returns(processHooks.Select(processHook => (processHook.HookedFile, false)));
+
+            _sut.Handle(processHooks);
+
+            _processProvider
+                .Received(processesCount)
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("Name")));
+
+            _processProvider
+                .Received(processesCount)
+                .Start(Arg.Is<string>(s => s.Contains("HookedFile")));
+        }
+
+        [Fact]
+        public void Handle_ShouldNotStartProcesses_WhenProcessHooksAreValidButHooksAreAlreadyOpen() {
+            const int processesCount = 3;
+
+            var processHooks =
+                _fixture
+                    .CreateMany<ProcessHook>(processesCount)
                     .ToArray();
 
             _processProvider
                 .GetProcessesByName(Arg.Any<string>())
-                .Returns(hooks.Select(hook => (hook.Name, true)));
+                .Returns(processHooks.Select(processHook => (processHook.Name, true)));
 
-            _sut.Handle(hooks);
+            _sut.Handle(processHooks);
 
             _processProvider
-                .Received(processCount)
+                .Received(processesCount * 2)
                 .GetProcessesByName(Arg.Any<string>());
 
             _processProvider
-                .Received(processCount)
+                .Received(processesCount - processesCount)
                 .Start(Arg.Any<string>());
         }
     }
