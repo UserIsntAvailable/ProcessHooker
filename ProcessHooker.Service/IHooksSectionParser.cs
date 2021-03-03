@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service {
     public interface IHooksSectionParser {
+        // TODO - Create a method parse for IEnumerable<KeyValuePair<string,string>>
         public IEnumerable<ProcessHook> Parse(IConfigurationSection section);
     }
 }

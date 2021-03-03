@@ -14,7 +14,7 @@ namespace ProcessHooker.Service {
                        group => string.Join(
                            ",",
                            group.Where(pair => pair.Value is not null)
-                                .Select(pair => $"\"{pair.Key[2..]}\":\"{pair.Value}\"")
+                                .Select(pair => $"\"Name\":\"{pair.Key[2..]}\", \"HookedFile\":\"{pair.Value}\"")
                        )
                    )
                    .Select(jsonString => JsonSerializer.Deserialize<ProcessHook>($"{{{jsonString}}}"))
