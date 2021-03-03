@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProcessHooker.Service {
-    class Program {
+    public static class Program {
         private static void Main(string[] args) {
             Log.Logger = new LoggerConfiguration()
                          .ReadFrom.Configuration(CreateConfigurationBuilder().Build())
@@ -19,6 +19,7 @@ namespace ProcessHooker.Service {
                        .UseSystemd()
                        .UseSerilog()
                        .UseWindowsService()
+                       .UseEnvironment("Development")
                        .ConfigureServices(
                            services => {
                                services.AddHostedService<Service>();
@@ -31,8 +32,10 @@ namespace ProcessHooker.Service {
 
         private static IConfigurationBuilder CreateConfigurationBuilder() {
             return new ConfigurationBuilder()
+                   .AddEnvironmentVariables()
                    .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", false, true);
+                   .AddJsonFile("appsettings.json", false, true)
+                   .AddJsonFile($"appsettings.Development.json", true);
         }
     }
 }
