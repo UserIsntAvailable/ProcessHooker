@@ -1,17 +1,13 @@
-﻿using System.IO;
+﻿using System.Threading.Tasks;
 using Serilog;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProcessHooker.Service {
     public static class Program {
-        private static void Main(string[] args) {
-            Log.Logger = new LoggerConfiguration()
-                         .ReadFrom.Configuration(CreateConfigurationBuilder().Build())
-                         .CreateLogger();
+        private static async Task Main(string[] args) {
 
-            CreateHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) {
@@ -20,6 +16,13 @@ namespace ProcessHooker.Service {
                        .UseSerilog()
                        .UseWindowsService()
                        .UseEnvironment("Development")
+                       .ConfigureLogging(
+                           (ctx, _) => {
+                               Log.Logger = new LoggerConfiguration()
+                                            .ReadFrom.Configuration(ctx.Configuration)
+                                            .CreateLogger();
+                           }
+                       )
                        .ConfigureServices(
                            services => {
                                services.AddHostedService<Service>();
@@ -28,14 +31,6 @@ namespace ProcessHooker.Service {
                                services.AddSingleton<IProcessHooksHandler, ProcessHooksHandler>();
                            }
                        );
-        }
-
-        private static IConfigurationBuilder CreateConfigurationBuilder() {
-            return new ConfigurationBuilder()
-                   .AddEnvironmentVariables()
-                   .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", false, true)
-                   .AddJsonFile($"appsettings.Development.json", true);
         }
     }
 }
