@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>ProcessHooker.Service</RootNamespace>
+    <UserSecretsId>b2724fc0-027d-4f62-a59e-5f3b0216f25c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
