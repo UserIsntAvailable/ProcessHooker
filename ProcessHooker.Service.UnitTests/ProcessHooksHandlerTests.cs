@@ -32,8 +32,8 @@ namespace ProcessHooker.Service.UnitTests {
                 .Returns(processHooks.Select(processHook => (processHook.Name, true)));
 
             _processProvider
-                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedFile")))
-                .Returns(processHooks.Select(processHook => (processHook.HookedFile, false)));
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedFilePath")))
+                .Returns(processHooks.Select(processHook => (processHook.HookedFilePath, false)));
 
             _sut.Handle(processHooks);
 
@@ -43,7 +43,7 @@ namespace ProcessHooker.Service.UnitTests {
 
             _processProvider
                 .Received(processesCount)
-                .Start(Arg.Is<string>(s => s.Contains("HookedFile")));
+                .Start(Arg.Is<string>(s => s.Contains("HookedFilePath")));
         }
 
         [Fact]

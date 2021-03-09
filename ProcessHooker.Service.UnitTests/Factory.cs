@@ -9,7 +9,7 @@ namespace ProcessHooker.Service.UnitTests {
         public static IConfigurationSection CreateConfigurationSection(IEnumerable<ProcessHook> processHooks) {
             var jsonHooks =
                 processHooks.Select(
-                    hook => $"{{\"{hook.Name}\":\"{hook.HookedFile}\"}}"
+                    hook => $"{{\"{hook.Name}\":\"{hook.HookedFilePath}\"}}"
                 );
 
             var jsonObject = $"{{\"Hooks\":[{string.Join(",", jsonHooks)}]}}";

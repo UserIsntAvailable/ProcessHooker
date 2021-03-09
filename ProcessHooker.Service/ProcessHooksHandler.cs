@@ -24,7 +24,7 @@ namespace ProcessHooker.Service {
                             return isOpen;
                         }
                     )
-                    .Select(hook => hook.HookedFile);
+                    .Select(hook => hook.HookedFileName);
 
             foreach(var hookFile in hooksToOpen) {
                 // TODO - Change the behaviour of this if statement
