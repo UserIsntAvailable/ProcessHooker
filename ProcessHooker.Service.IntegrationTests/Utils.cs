@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service.IntegrationTests {
     public static class Utils {
@@ -29,40 +32,72 @@ namespace ProcessHooker.Service.IntegrationTests {
         }
 
         public static bool IsProcessOpen(string processName, DateTime since) {
-            return Process
-                   .GetProcessesByName(processName)
-                   .Any(p => p.StartTime > since);
+            try {
+                return Process
+                       .GetProcessesByName(processName)
+                       .Any(p => p.StartTime > since);
+            }
+            catch(Win32Exception) { return true; }
         }
 
-        public static void CleanupTest(string projectPath, DateTime startTimeOfTest) {
-            KillTestsProcesses(startTimeOfTest);
+        public static void CleanupTest(
+            IEnumerable<string> processesToKill,
+            string              projectPath,
+            DateTime            startTimeOfTest
+        ) {
+            KillTestsProcesses(processesToKill, startTimeOfTest);
             DeleteAppSettingsDevelopmentOnProjectIfExists(projectPath);
+        }
+
+        public static IEnumerable<ProcessHook> GetProcessHooksFromAppSettings(string userSecretsId) {
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(TEST_APPSETTINGS_NAME, false, false);
+
+            if(!string.IsNullOrWhiteSpace(userSecretsId)) configuration.AddUserSecrets(userSecretsId);
+
+            return new HooksSectionParser()
+                .Parse(
+                    configuration
+                        .Build()
+                        .GetSection("Hooks")
+                );
+        }
+
+        public static void OpenProcess(string filename) {
+            Process.Start(
+                new ProcessStartInfo() {
+                    FileName        = filename,
+                    UseShellExecute = false,
+                }
+            );
         }
         #endregion
 
         #region Private Methods
-        private static void KillTestsProcesses(DateTime after) {
-            KillAppSettingsProcesses(after);
-            KillDotNetProcesses(after);
+        private static void KillTestsProcesses(IEnumerable<string> processesToKill, DateTime since) {
+            KillAppSettingsProcesses(processesToKill, since);
+            KillDotNetProcesses(since);
         }
 
-        private static void KillAppSettingsProcesses(DateTime after) {
-            /* I know that this destroys the point of being a util class,
-             * I put on my To-do list an auto parser of the appsettings file */
-            KillProcess(ProgramTests.FirstTestableFile, after);
-            KillProcess(ProgramTests.SecondTestableFile, after);
+        private static void KillAppSettingsProcesses(IEnumerable<string> processesToKill, DateTime since) {
+            foreach(var process in processesToKill) { KillProcess(process, since); }
         }
 
-        private static void KillDotNetProcesses(DateTime after) {
+        private static void KillDotNetProcesses(DateTime since) {
             KillProcess(
                 "dotnet",
-                after
+                since
             );
         }
 
-        private static void KillProcess(string processName, DateTime after) {
+        private static void KillProcess(string processName, DateTime since) {
             foreach(var process in Process.GetProcessesByName(processName)) {
-                if(!process.HasExited && process.StartTime > after) process.Kill();
+                try {
+                    if(!process.HasExited && process.StartTime > since) process.Kill();
+                }
+                catch(Win32Exception) {
+                    // ignored
+                }
             }
         }
 

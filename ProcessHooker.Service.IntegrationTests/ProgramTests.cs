@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,19 +13,25 @@ namespace ProcessHooker.Service.IntegrationTests {
     /// </see>
     /// </summary>
     public class ProgramTests {
-        // TODO - Parse appsettings automatically and get the processName's to monitor
-        public const string FirstTestableFile  = "cmd";
-        public const string SecondTestableFile = "powershell";
-        
+        private const string USER_SECRETS_ID = "b2724fc0-027d-4f62-a59e-5f3b0216f25c";
+
         [Fact]
         public async void RunningProgramWithDotnet_ShouldOpenTwoProcesses_WhenServiceIsStarted() {
-            var projectPath = Utils.GetProjectLocation(typeof(Program));
-            var testTimeout = TimeSpan.FromSeconds(value: 15);
+            var startTimeOfTest = DateTime.Now;
 
             Task dotnetTask              = null;
             var  cancellationTokenSource = new CancellationTokenSource();
-            var  startTimeOfDotnetRun    = DateTime.Now;
-            var  stopwatch               = new Stopwatch();
+
+            var projectPath = Utils.GetProjectLocation(typeof(Program));
+            var testTimeout = TimeSpan.FromSeconds(15);
+
+            var processHooks = Utils.GetProcessHooksFromAppSettings(USER_SECRETS_ID).ToArray();
+            var processesToOpen   = processHooks.Select(p => p.Name).ToArray();
+            var processesToVerify = processHooks.Select(p => p.HookedFileName).ToArray();
+
+            OpenProcessesIfNeeded(processesToOpen);
+
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             try {
@@ -39,7 +47,7 @@ namespace ProcessHooker.Service.IntegrationTests {
 
                     if(stopwatch.Elapsed > testTimeout)
                         throw new TimeoutException("The test has been running too long without a response");
-                } while(!VerifyIfProcessesWereOpened(startTimeOfDotnetRun));
+                } while(!VerifyIfProcessesWereOpened(processesToVerify, startTimeOfTest));
             }
             finally {
                 try {
@@ -52,14 +60,22 @@ namespace ProcessHooker.Service.IntegrationTests {
                     // ignored
                 }
 
-                Utils.CleanupTest(projectPath, startTimeOfDotnetRun);
+                Utils.CleanupTest(processesToOpen.Concat(processesToVerify), projectPath, startTimeOfTest);
             }
         }
 
-        private static bool VerifyIfProcessesWereOpened(DateTime testStarted) {
-            return Utils.IsProcessOpen(FirstTestableFile, testStarted)
-                   &&
-                   Utils.IsProcessOpen(SecondTestableFile, testStarted);
+        private static void OpenProcessesIfNeeded(IEnumerable<string> processesToOpen) {
+            foreach(var process in processesToOpen) {
+                if(!Utils.IsProcessOpen(process, DateTime.UnixEpoch)) { Utils.OpenProcess(process); }
+            }
+        }
+
+        private static bool VerifyIfProcessesWereOpened(IEnumerable<string> processesToVerify, DateTime since) {
+            return processesToVerify
+                .All(
+                    process =>
+                        Utils.IsProcessOpen(process.Replace(".exe", ""), since)
+                );
         }
     }
 }
