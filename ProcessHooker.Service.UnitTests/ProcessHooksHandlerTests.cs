@@ -5,13 +5,13 @@ using NSubstitute;
 using Xunit;
 
 namespace ProcessHooker.Service.UnitTests {
-    public class HooksHandlerTests {
+    public class ProcessHooksHandlerTests {
         private readonly ProcessHooksHandler          _sut;
         private readonly Fixture                      _fixture         = new Fixture();
         private readonly IProcessProvider             _processProvider = Substitute.For<IProcessProvider>();
         private readonly ILogger<ProcessHooksHandler> _logger          = Substitute.For<ILogger<ProcessHooksHandler>>();
 
-        public HooksHandlerTests() {
+        public ProcessHooksHandlerTests() {
             _sut = new ProcessHooksHandler(
                 _processProvider,
                 _logger
