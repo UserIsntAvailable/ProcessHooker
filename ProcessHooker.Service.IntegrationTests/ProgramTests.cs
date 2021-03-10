@@ -25,9 +25,9 @@ namespace ProcessHooker.Service.IntegrationTests {
             var projectPath = Utils.GetProjectLocation(typeof(Program));
             var testTimeout = TimeSpan.FromSeconds(15);
 
-            var processHooks = Utils.GetProcessHooksFromAppSettings(USER_SECRETS_ID).ToArray();
-            var processesToOpen   = processHooks.Select(p => p.Name).ToArray();
-            var processesToVerify = processHooks.Select(p => p.HookedFileName).ToArray();
+            var hooks = Utils.GetHooksFromAppSettings(USER_SECRETS_ID).ToArray();
+            var processesToOpen   = hooks.Select(p => p.Name).ToArray();
+            var processesToMonitor = hooks.Select(p => p.HookedFileName).ToArray();
 
             OpenProcessesIfNeeded(processesToOpen);
 
@@ -47,7 +47,7 @@ namespace ProcessHooker.Service.IntegrationTests {
 
                     if(stopwatch.Elapsed > testTimeout)
                         throw new TimeoutException("The test has been running too long without a response");
-                } while(!VerifyIfProcessesWereOpened(processesToVerify, startTimeOfTest));
+                } while(!VerifyIfProcessesWereOpened(processesToMonitor, startTimeOfTest));
             }
             finally {
                 try {
@@ -60,7 +60,7 @@ namespace ProcessHooker.Service.IntegrationTests {
                     // ignored
                 }
 
-                Utils.CleanupTest(processesToOpen.Concat(processesToVerify), projectPath, startTimeOfTest);
+                Utils.CleanupTest(processesToOpen.Concat(processesToMonitor), projectPath, startTimeOfTest);
             }
         }
 
@@ -70,8 +70,8 @@ namespace ProcessHooker.Service.IntegrationTests {
             }
         }
 
-        private static bool VerifyIfProcessesWereOpened(IEnumerable<string> processesToVerify, DateTime since) {
-            return processesToVerify
+        private static bool VerifyIfProcessesWereOpened(IEnumerable<string> processesToMonitor, DateTime since) {
+            return processesToMonitor
                 .All(
                     process =>
                         Utils.IsProcessOpen(process.Replace(".exe", ""), since)

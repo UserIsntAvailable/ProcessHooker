@@ -5,37 +5,37 @@ using NSubstitute;
 using Xunit;
 
 namespace ProcessHooker.Service.UnitTests {
-    public class ProcessHooksHandlerTests {
-        private readonly ProcessHooksHandler          _sut;
-        private readonly Fixture                      _fixture         = new Fixture();
-        private readonly IProcessProvider             _processProvider = Substitute.For<IProcessProvider>();
-        private readonly ILogger<ProcessHooksHandler> _logger          = Substitute.For<ILogger<ProcessHooksHandler>>();
+    public class HooksHandlerTests {
+        private readonly HooksHandler          _sut;
+        private readonly Fixture               _fixture         = new Fixture();
+        private readonly IProcessProvider      _processProvider = Substitute.For<IProcessProvider>();
+        private readonly ILogger<HooksHandler> _logger          = Substitute.For<ILogger<HooksHandler>>();
 
-        public ProcessHooksHandlerTests() {
-            _sut = new ProcessHooksHandler(
+        public HooksHandlerTests() {
+            _sut = new HooksHandler(
                 _processProvider,
                 _logger
             );
         }
 
         [Fact]
-        public void Handle_ShouldStartProcesses_WhenProcessHooksAreValidAndHooksAreNotOpenYet() {
+        public void Handle_ShouldStartProcesses_WhenHooksAreValidAndHooksAreNotOpenYet() {
             const int processesCount = 3;
 
-            var processHooks =
+            var hooks =
                 _fixture
-                    .CreateMany<ProcessHook>(processesCount)
+                    .CreateMany<Hook>(processesCount)
                     .ToArray();
 
             _processProvider
                 .GetProcessesByName(Arg.Is<string>(s => s.Contains("Name")))
-                .Returns(processHooks.Select(processHook => (processHook.Name, true)));
+                .Returns(hooks.Select(hook => (hook.Name, true)));
 
             _processProvider
                 .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedFilePath")))
-                .Returns(processHooks.Select(processHook => (processHook.HookedFilePath, false)));
+                .Returns(hooks.Select(hook => (hook.HookedFilePath, false)));
 
-            _sut.Handle(processHooks);
+            _sut.Handle(hooks);
 
             _processProvider
                 .Received(processesCount)
@@ -47,19 +47,19 @@ namespace ProcessHooker.Service.UnitTests {
         }
 
         [Fact]
-        public void Handle_ShouldNotStartProcesses_WhenProcessHooksAreValidButHooksAreAlreadyOpen() {
+        public void Handle_ShouldNotStartProcesses_WhenHooksAreValidButHooksAreAlreadyOpen() {
             const int processesCount = 3;
 
-            var processHooks =
+            var hooks =
                 _fixture
-                    .CreateMany<ProcessHook>(processesCount)
+                    .CreateMany<Hook>(processesCount)
                     .ToArray();
 
             _processProvider
                 .GetProcessesByName(Arg.Any<string>())
-                .Returns(processHooks.Select(processHook => (processHook.Name, true)));
+                .Returns(hooks.Select(hook => (hook.Name, true)));
 
-            _sut.Handle(processHooks);
+            _sut.Handle(hooks);
 
             _processProvider
                 .Received(processesCount * 2)

@@ -7,21 +7,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service {
     public class Service : BackgroundService {
-        private readonly ILogger<Service>     _logger;
-        private readonly IConfiguration       _configuration;
-        private readonly IHooksSectionParser  _hooksSectionParser;
-        private readonly IProcessHooksHandler _hooksHandler;
+        private readonly ILogger<Service>    _logger;
+        private readonly IConfiguration      _configuration;
+        private readonly IHooksSectionParser _hooksSectionParser;
+        private readonly IHooksHandler       _hooksHandler;
 
         public Service(
-            ILogger<Service>     logger,
-            IConfiguration       configuration,
-            IHooksSectionParser  hooksSectionParser,
-            IProcessHooksHandler hooksHandler
+            ILogger<Service>    logger,
+            IConfiguration      configuration,
+            IHooksSectionParser hooksSectionParser,
+            IHooksHandler       hooksHandler
         ) {
-            _logger        = logger;
-            _configuration = configuration;
+            _logger             = logger;
+            _configuration      = configuration;
             _hooksSectionParser = hooksSectionParser;
-            _hooksHandler  = hooksHandler;
+            _hooksHandler       = hooksHandler;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken) {
@@ -32,7 +32,7 @@ namespace ProcessHooker.Service {
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
             // TODO - Change Hooks section on appsettings.json format, and then the parser
-            var processHooks =
+            var hooks =
                 _hooksSectionParser
                     .Parse(_configuration.GetSection("Hooks"))
                     .ToArray();
@@ -43,8 +43,8 @@ namespace ProcessHooker.Service {
             while(!stoppingToken.IsCancellationRequested) {
                 // TODO - Be able to configure the delay time from the appsettings.json.
                 await Task.Delay(4000, stoppingToken);
-                
-                _hooksHandler.Handle(processHooks);
+
+                _hooksHandler.Handle(hooks);
             }
 
             await Task.CompletedTask;

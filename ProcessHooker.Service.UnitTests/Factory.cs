@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service.UnitTests {
     public static class Factory {
-        public static IConfigurationSection CreateConfigurationSection(IEnumerable<ProcessHook> processHooks) {
+        public static IConfigurationSection CreateConfigurationSection(IEnumerable<Hook> hooks) {
             var jsonHooks =
-                processHooks.Select(
+                hooks.Select(
                     hook => $"{{\"{hook.Name}\":\"{hook.HookedFilePath}\"}}"
                 );
 

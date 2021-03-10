@@ -14,10 +14,10 @@ namespace ProcessHooker.Service.UnitTests {
         }
 
         [Fact]
-        public void Parse_ShouldReturnIEnumerableOfProcessHooks_WhenIConfigurationSectionIsValid() {
+        public void Parse_ShouldReturnIEnumerableOfHooks_WhenIConfigurationSectionIsValid() {
             var actual =
                 _fixture
-                    .CreateMany<ProcessHook>(3)
+                    .CreateMany<Hook>(3)
                     .ToArray();
 
             var expected = _sut

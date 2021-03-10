@@ -28,7 +28,7 @@ namespace ProcessHooker.Service {
                                services.AddHostedService<Service>();
                                services.AddSingleton<IHooksSectionParser, HooksSectionParser>();
                                services.AddSingleton<IProcessProvider, ProcessProvider>();
-                               services.AddSingleton<IProcessHooksHandler, ProcessHooksHandler>();
+                               services.AddSingleton<IHooksHandler, HooksHandler>();
                            }
                        );
         }

@@ -49,7 +49,7 @@ namespace ProcessHooker.Service.IntegrationTests {
             DeleteAppSettingsDevelopmentOnProjectIfExists(projectPath);
         }
 
-        public static IEnumerable<ProcessHook> GetProcessHooksFromAppSettings(string userSecretsId) {
+        public static IEnumerable<Hook> GetHooksFromAppSettings(string userSecretsId) {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(TEST_APPSETTINGS_NAME, false, false);
 
