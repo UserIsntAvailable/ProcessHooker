@@ -9,18 +9,18 @@ namespace ProcessHooker.Service {
     public class Service : BackgroundService {
         private readonly ILogger<Service>     _logger;
         private readonly IConfiguration       _configuration;
-        private readonly IHooksSectionParser  _sectionParser;
+        private readonly IHooksSectionParser  _hooksSectionParser;
         private readonly IProcessHooksHandler _hooksHandler;
 
         public Service(
             ILogger<Service>     logger,
             IConfiguration       configuration,
-            IHooksSectionParser  sectionParser,
+            IHooksSectionParser  hooksSectionParser,
             IProcessHooksHandler hooksHandler
         ) {
             _logger        = logger;
             _configuration = configuration;
-            _sectionParser = sectionParser;
+            _hooksSectionParser = hooksSectionParser;
             _hooksHandler  = hooksHandler;
         }
 
@@ -33,7 +33,7 @@ namespace ProcessHooker.Service {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
             // TODO - Change Hooks section on appsettings.json format, and then the parser
             var processHooks =
-                _sectionParser
+                _hooksSectionParser
                     .Parse(_configuration.GetSection("Hooks"))
                     .ToArray();
 
