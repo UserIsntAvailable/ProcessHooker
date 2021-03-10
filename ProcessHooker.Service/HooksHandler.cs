@@ -19,21 +19,19 @@ namespace ProcessHooker.Service {
                         hook => {
                             var isOpen = this.IsProcessOpen(hook.Name);
 
-                            if(isOpen) _logger.LogInformation("{HookName} is open", hook.Name);
+                            if(isOpen) _logger.LogInformation("{HookName} was open", hook.Name);
 
                             return isOpen;
                         }
-                    )
-                    .Select(hook => hook.HookedFileName);
+                    );
             
-            foreach(var hookFile in hooksToOpen) {
+            foreach(var hook in hooksToOpen) {
                 // TODO - Change the behaviour of this if statement
-                if(this.IsProcessOpen(hookFile)) continue;
+                if(this.IsProcessOpen(hook.HookedFileName)) continue;
 
-                _logger.LogInformation("Opening {HookFile}", hookFile);
+                _logger.LogInformation("Opening {HookedFileName}", hook.HookedFileName);
                 
-                // BUG - I'm taking the name of the file instead of the file path
-                _processProvider.Start(hookFile);
+                _processProvider.Start(hook.HookedFilePath);
             }
         }
 
