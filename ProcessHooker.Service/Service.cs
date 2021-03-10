@@ -37,7 +37,7 @@ namespace ProcessHooker.Service {
                     .Parse(_configuration.GetSection("Hooks"))
                     .ToArray();
 
-            // TODO - Log what processHooks were parsed in a json array format. 
+            // TODO - Log what hooks were parsed in a json array format. 
             _logger.LogInformation("Hooks section parsed");
 
             while(!stoppingToken.IsCancellationRequested) {

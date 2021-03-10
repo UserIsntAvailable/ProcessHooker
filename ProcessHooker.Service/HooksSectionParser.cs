@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service {
-    // TODO - Add FluentValidation to validate if the ProcessHooks are valid
+    // TODO - Add FluentValidation to validate if the hooks are valid
     public class HooksSectionParser : IHooksSectionParser {
         public IEnumerable<Hook> Parse(IConfigurationSection section) {
             return section

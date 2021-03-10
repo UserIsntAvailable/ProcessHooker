@@ -2,8 +2,9 @@
 
 namespace ProcessHooker.Service {
     /// <summary>
-    /// Maps process hooks from the appsettings.json file
+    /// Maps hooks from the appsettings.json file
     /// </summary>
+    // TODO - Change the properties names they are every misleading
     public record Hook(string Name, string HookedFilePath) {
         public string HookedFileName {
             get {
