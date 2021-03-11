@@ -28,22 +28,22 @@ namespace ProcessHooker.Service.UnitTests {
                     .ToArray();
 
             _processProvider
-                .GetProcessesByName(Arg.Is<string>(s => s.Contains("Name")))
-                .Returns(hooks.Select(hook => (hook.Name, true)));
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedProcessName")))
+                .Returns(hooks.Select(hook => (hook.HookedProcessName, true)));
 
             _processProvider
-                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedFilePath")))
-                .Returns(hooks.Select(hook => (hook.HookedFilePath, false)));
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("FilePath")))
+                .Returns(hooks.Select(hook => (hook.FilePath, false)));
 
             _sut.Handle(hooks);
 
             _processProvider
                 .Received(processesCount)
-                .GetProcessesByName(Arg.Is<string>(s => s.Contains("Name")));
+                .GetProcessesByName(Arg.Is<string>(s => s.Contains("HookedProcessName")));
 
             _processProvider
                 .Received(processesCount)
-                .Start(Arg.Is<string>(s => s.Contains("HookedFilePath")));
+                .Start(Arg.Is<string>(s => s.Contains("FilePath")));
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace ProcessHooker.Service.UnitTests {
 
             _processProvider
                 .GetProcessesByName(Arg.Any<string>())
-                .Returns(hooks.Select(hook => (hook.Name, true)));
+                .Returns(hooks.Select(hook => (hook.HookedProcessName, true)));
 
             _sut.Handle(hooks);
 

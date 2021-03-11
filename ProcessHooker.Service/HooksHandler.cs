@@ -17,21 +17,22 @@ namespace ProcessHooker.Service {
                 hooks
                     .Where(
                         hook => {
-                            var isOpen = this.IsProcessOpen(hook.Name);
+                            var isOpen = this.IsProcessOpen(hook.HookedProcessName);
 
-                            if(isOpen) _logger.LogInformation("{HookName} was open", hook.Name);
+                            if(isOpen)
+                                _logger.LogInformation("{HookHookedProcessName} was open", hook.HookedProcessName);
 
                             return isOpen;
                         }
                     );
-            
+
             foreach(var hook in hooksToOpen) {
                 // TODO - Change the behaviour of this if statement
-                if(this.IsProcessOpen(hook.HookedFileName)) continue;
+                if(this.IsProcessOpen(hook.FileName)) continue;
 
-                _logger.LogInformation("Opening {HookedFileName}", hook.HookedFileName);
-                
-                _processProvider.Start(hook.HookedFilePath);
+                _logger.LogInformation("Opening {HookFileName}", hook.FileName);
+
+                _processProvider.Start(hook.FilePath);
             }
         }
 

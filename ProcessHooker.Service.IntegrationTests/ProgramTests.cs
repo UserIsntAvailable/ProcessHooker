@@ -26,8 +26,8 @@ namespace ProcessHooker.Service.IntegrationTests {
             var testTimeout = TimeSpan.FromSeconds(15);
 
             var hooks = Utils.GetHooksFromAppSettings(USER_SECRETS_ID).ToArray();
-            var processesToOpen   = hooks.Select(p => p.Name).ToArray();
-            var processesToMonitor = hooks.Select(p => p.HookedFileName).ToArray();
+            var processesToOpen   = hooks.Select(p => p.HookedProcessName).ToArray();
+            var processesToMonitor = hooks.Select(p => p.FileName).ToArray();
 
             OpenProcessesIfNeeded(processesToOpen);
 

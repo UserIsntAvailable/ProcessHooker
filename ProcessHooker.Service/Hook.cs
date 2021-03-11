@@ -7,10 +7,10 @@ namespace ProcessHooker.Service {
     /// </summary>
     // TODO - Change the properties names they are every misleading
     [Serializable]
-    public record Hook(string Name, string HookedFilePath) {
-        public string HookedFileName {
+    public record Hook(string HookedProcessName, string FilePath) {
+        public string FileName {
             get {
-                return this.HookedFilePath
+                return this.FilePath
                            .Split(Path.PathSeparator)[0]
                            .Split(".")[0];
             }
