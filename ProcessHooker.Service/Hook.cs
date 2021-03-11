@@ -8,7 +8,6 @@ namespace ProcessHooker.Service {
     // TODO - Change the properties names they are every misleading
     [Serializable]
     public record Hook(string Name, string HookedFilePath) {
-        
         public string HookedFileName {
             get {
                 return this.HookedFilePath

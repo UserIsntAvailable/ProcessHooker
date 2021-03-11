@@ -2,15 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
 namespace ProcessHooker.Service.UnitTests {
     public static class Factory {
         public static IConfigurationSection CreateConfigurationSection(IEnumerable<Hook> hooks) {
-            var jsonHooks =
-                hooks.Select(
-                    hook => $"{{\"{hook.Name}\":\"{hook.HookedFilePath}\"}}"
-                );
+            var jsonHooks = hooks
+                .Select(hook => JsonSerializer.Serialize(hook));
 
             var jsonObject = $"{{\"Hooks\":[{string.Join(",", jsonHooks)}]}}";
 

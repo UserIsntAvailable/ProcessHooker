@@ -14,10 +14,10 @@ namespace ProcessHooker.Service {
                        group => string.Join(
                            ",",
                            group.Where(pair => pair.Value is not null)
-                                .Select(pair => $"\"Name\":\"{pair.Key[2..]}\", \"HookedFilePath\":\"{pair.Value}\"")
+                                .Select(pair => $"\"{pair.Key[2..]}\": \"{pair.Value}\"")
                        )
                    )
-                   .Select(jsonString => JsonSerializer.Deserialize<Hook>($"{{{jsonString}}}"))
+                   .Select(hooksProperties => JsonSerializer.Deserialize<Hook>($"{{{hooksProperties}}}"))
                    .ToList();
         }
     }

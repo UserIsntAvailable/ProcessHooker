@@ -31,7 +31,6 @@ namespace ProcessHooker.Service {
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-            // TODO - Change Hooks section on appsettings.json format, and then the parser
             var hooks =
                 _hooksSectionParser
                     .Parse(_configuration.GetSection("Hooks"))
