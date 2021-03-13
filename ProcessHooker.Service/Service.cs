@@ -39,9 +39,14 @@ namespace ProcessHooker.Service {
             // TODO - Log what hooks were parsed in a json array format. 
             _logger.LogInformation("Hooks section parsed");
 
+            var scanDelayOnMilliseconds =
+                _configuration.GetValue<int>("ProcessHooker:ScanDelay")
+                *
+                1000;
+
             while(!stoppingToken.IsCancellationRequested) {
                 // TODO - Be able to configure the delay time from the appsettings.json.
-                await Task.Delay(4000, stoppingToken);
+                await Task.Delay(scanDelayOnMilliseconds, stoppingToken);
 
                 _hooksHandler.Handle(hooks);
             }
