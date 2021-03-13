@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -36,8 +37,10 @@ namespace ProcessHooker.Service {
                     .Parse(_configuration.GetSection("ProcessHooker:Hooks"))
                     .ToArray();
 
-            // TODO - Log what hooks were parsed in a json array format. 
-            _logger.LogInformation("Hooks section parsed");
+            _logger.LogInformation(
+                "Hooks section parsed {Hooks}",
+                hooks.Select(hook => JsonSerializer.Serialize(hook))
+            );
 
             var scanDelayOnMilliseconds =
                 _configuration.GetValue<int>("ProcessHooker:ScanDelay")
