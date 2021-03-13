@@ -45,7 +45,6 @@ namespace ProcessHooker.Service {
                 1000;
 
             while(!stoppingToken.IsCancellationRequested) {
-                // TODO - Be able to configure the delay time from the appsettings.json.
                 await Task.Delay(scanDelayOnMilliseconds, stoppingToken);
 
                 _hooksHandler.Handle(hooks);
