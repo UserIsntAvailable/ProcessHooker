@@ -11,12 +11,12 @@ namespace ProcessHooker.Service.UnitTests {
             var jsonHooks = hooks
                 .Select(hook => JsonSerializer.Serialize(hook));
 
-            var jsonObject = $"{{\"Hooks\":[{string.Join(",", jsonHooks)}]}}";
+            var jsonObject = $"{{\"ProcessHooker\": {{\"Hooks\":[{string.Join(",", jsonHooks)}]}}}}";
 
             return new ConfigurationBuilder()
                    .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(jsonObject)))
                    .Build()
-                   .GetSection("Hooks");
+                   .GetSection("ProcessHooker:Hooks");
         }
     }
 }

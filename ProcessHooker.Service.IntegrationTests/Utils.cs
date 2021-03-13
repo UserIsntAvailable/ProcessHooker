@@ -59,7 +59,7 @@ namespace ProcessHooker.Service.IntegrationTests {
                 .Parse(
                     configuration
                         .Build()
-                        .GetSection("Hooks")
+                        .GetSection("ProcessHooker:Hooks")
                 );
         }
 

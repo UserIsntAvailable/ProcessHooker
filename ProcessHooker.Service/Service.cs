@@ -33,7 +33,7 @@ namespace ProcessHooker.Service {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
             var hooks =
                 _hooksSectionParser
-                    .Parse(_configuration.GetSection("Hooks"))
+                    .Parse(_configuration.GetSection("ProcessHooker:Hooks"))
                     .ToArray();
 
             // TODO - Log what hooks were parsed in a json array format. 
