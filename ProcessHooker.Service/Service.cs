@@ -15,7 +15,6 @@ namespace ProcessHooker.Service {
         
         // TODO - Change IConfiguration to IConfigurationRoot to reload the configuration
         // TODO - Move _hooksSectionParser to StartAsync
-        // TODO - Create a scope of _hooksSectionParser
         public Service(
             ILogger<Service>    logger,
             IConfiguration      configuration,
@@ -46,7 +45,7 @@ namespace ProcessHooker.Service {
             );
 
             var scanDelayOnMilliseconds =
-                _configuration.GetValue<int>("ProcessHooker:ScanDelay")
+                _configuration.GetValue("ProcessHooker:ScanDelay", 5)
                 *
                 1000;
 
