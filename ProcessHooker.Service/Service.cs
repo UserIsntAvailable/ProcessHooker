@@ -12,7 +12,10 @@ namespace ProcessHooker.Service {
         private readonly IConfiguration      _configuration;
         private readonly IHooksSectionParser _hooksSectionParser;
         private readonly IHooksHandler       _hooksHandler;
-
+        
+        // TODO - Change IConfiguration to IConfigurationRoot to reload the configuration
+        // TODO - Move _hooksSectionParser to StartAsync
+        // TODO - Create a scope of _hooksSectionParser
         public Service(
             ILogger<Service>    logger,
             IConfiguration      configuration,

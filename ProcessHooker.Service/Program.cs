@@ -26,6 +26,7 @@ namespace ProcessHooker.Service {
                        .ConfigureServices(
                            services => {
                                services.AddHostedService<Service>();
+                               // TODO - Change this to scope 
                                services.AddSingleton<IHooksSectionParser, HooksSectionParser>();
                                services.AddSingleton<IProcessProvider, ProcessProvider>();
                                services.AddSingleton<IHooksHandler, HooksHandler>();
