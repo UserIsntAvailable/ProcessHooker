@@ -3,7 +3,6 @@ using FluentValidation;
 
 namespace ProcessHooker.Service {
     public class HookValidator : AbstractValidator<Hook> {
-
         public HookValidator() {
             this.RuleFor(hook => hook.HookedProcessName)
                 .NotEmpty()
