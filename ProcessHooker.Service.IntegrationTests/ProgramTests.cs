@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace ProcessHooker.Service.IntegrationTests {
     ///     <cref>https://github.com/fortumoslovarme/realintegrationtests/tree/dbe3ee50b4aad00278014532e7687beb39dc8bfd</cref>
     /// </see>
     /// </summary>
+    // BUG - Process.GetProcessesByName is not finding anymore processes of cmd
     public class ProgramTests {
         private const string USER_SECRETS_ID = "b2724fc0-027d-4f62-a59e-5f3b0216f25c";
 
@@ -25,9 +27,9 @@ namespace ProcessHooker.Service.IntegrationTests {
             var projectPath = Utils.GetProjectLocation(typeof(Program));
             var testTimeout = TimeSpan.FromSeconds(15);
 
-            var hooks = Utils.GetHooksFromAppSettings(USER_SECRETS_ID).ToArray();
-            var processesToOpen   = hooks.Select(p => p.HookedProcessName).ToArray();
-            var processesToMonitor = hooks.Select(p => p.FileName).ToArray();
+            var hooks                = Utils.GetHooksFromAppSettings(USER_SECRETS_ID).ToArray();
+            var processesToOpen    = hooks.Select(p => p.HookedProcessName).ToArray();
+            var processesToMonitor = hooks.Select(p => p.Filename).ToArray();
 
             OpenProcessesIfNeeded(processesToOpen);
 
@@ -74,7 +76,7 @@ namespace ProcessHooker.Service.IntegrationTests {
             return processesToMonitor
                 .All(
                     process =>
-                        Utils.IsProcessOpen(process.Replace(".exe", ""), since)
+                        Utils.IsProcessOpen(process, since)
                 );
         }
     }

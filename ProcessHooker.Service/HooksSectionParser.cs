@@ -4,7 +4,6 @@ using System.Text.Json;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace ProcessHooker.Service {
     public class HooksSectionParser : IHooksSectionParser {

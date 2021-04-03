@@ -6,7 +6,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Serilog;
 
 namespace ProcessHooker.Service.UnitTests {
     public class HooksSectionParserTests {
@@ -27,9 +26,9 @@ namespace ProcessHooker.Service.UnitTests {
                     .CreateMany<Hook>(3)
                     .ToArray();
 
-            var hookValidation = new ValidationResult();
+            var validationResult = new ValidationResult();
 
-            _validator.Validate(Arg.Any<Hook>()).Returns(hookValidation);
+            _validator.Validate(Arg.Any<Hook>()).Returns(validationResult);
 
             var expected = _sut
                 .Parse(Factory.CreateConfigurationSection(actual));

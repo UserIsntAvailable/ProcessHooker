@@ -5,7 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Configuration;
+using NSubstitute;
 
 namespace ProcessHooker.Service.IntegrationTests {
     public static class Utils {
@@ -55,7 +58,13 @@ namespace ProcessHooker.Service.IntegrationTests {
 
             if(!string.IsNullOrWhiteSpace(userSecretsId)) configuration.AddUserSecrets(userSecretsId);
 
-            return new HooksSectionParser(new HookValidator(), null)
+            var hookValidator = Substitute.For<IValidator<Hook>>();
+
+            var validationResult = new ValidationResult();
+            
+            hookValidator.Validate(Arg.Any<Hook>()).Returns(validationResult);
+
+            return new HooksSectionParser(hookValidator, null)
                 .Parse(
                     configuration
                         .Build()

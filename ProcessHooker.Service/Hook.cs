@@ -8,7 +8,7 @@ namespace ProcessHooker.Service {
     [Serializable]
     public record Hook(string HookedProcessName, string FilePath) {
         private string _filename = "";
-        public string FileName {
+        public string Filename {
             get {
                 return string.IsNullOrEmpty(_filename)
                     ? Path.GetFileName(this.FilePath)

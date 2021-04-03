@@ -28,9 +28,9 @@ namespace ProcessHooker.Service {
 
             foreach(var hook in hooksToOpen) {
                 // TODO - Change the behaviour of this if statement
-                if(this.IsProcessOpen(hook.FileName)) continue;
+                if(this.IsProcessOpen(hook.Filename)) continue;
 
-                _logger.LogInformation("Opening {HookFileName}", hook.FileName);
+                _logger.LogInformation("Opening {HookFileName}", hook.Filename);
 
                 _processProvider.Start(hook.FilePath);
             }
