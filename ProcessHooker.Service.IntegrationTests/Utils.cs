@@ -55,7 +55,7 @@ namespace ProcessHooker.Service.IntegrationTests {
 
             if(!string.IsNullOrWhiteSpace(userSecretsId)) configuration.AddUserSecrets(userSecretsId);
 
-            return new HooksSectionParser()
+            return new HooksSectionParser(new HookValidator(), null)
                 .Parse(
                     configuration
                         .Build()

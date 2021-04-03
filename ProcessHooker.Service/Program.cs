@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using FluentValidation;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProcessHooker.Service {
-    public static class Program {
+    public class Program {
         private static async Task Main(string[] args) {
 
             await CreateHostBuilder(args).Build().RunAsync();
@@ -29,6 +30,7 @@ namespace ProcessHooker.Service {
                                services.AddSingleton<IHooksSectionParser, HooksSectionParser>();
                                services.AddSingleton<IProcessProvider, ProcessProvider>();
                                services.AddSingleton<IHooksHandler, HooksHandler>();
+                               services.AddValidatorsFromAssemblyContaining<Program>();
                            }
                        );
         }
