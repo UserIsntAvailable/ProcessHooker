@@ -7,6 +7,14 @@ namespace ProcessHooker.Service {
     /// </summary>
     [Serializable]
     public record Hook(string HookedProcessName, string FilePath) {
-        public string FileName => Path.GetFileName(this.FilePath);
+        private string _filename = "";
+        public string FileName {
+            get {
+                return string.IsNullOrEmpty(_filename)
+                    ? Path.GetFileName(this.FilePath)
+                    : _filename;
+            }
+            set { _filename = value; }
+        }
     }
 }
